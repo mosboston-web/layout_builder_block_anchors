@@ -1,0 +1,7 @@
+copy_anchor_link:
+  version: 1.x
+  js:
+    js/copy-anchor-link.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupalSettings

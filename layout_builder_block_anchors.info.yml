@@ -1,0 +1,7 @@
+name: Layout Builder Block Anchors
+type: module
+description: 'Adds anchorable UUIDs to layout builder blocks with a site builder menu item for copying an anchored link.'
+core_version_requirement: ^9 || ^10 || ^11
+package: Layout
+dependencies:
+  - drupal:layout_builder

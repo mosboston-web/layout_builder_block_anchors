@@ -1,0 +1,63 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Layout Builder Block Anchors module.
+ */
+
+use Drupal\Core\Block\BlockPluginInterface;
+
+/**
+ * Implements hook_block_view_alter().
+ *
+ * Adds a UUID-based HTML ID attribute to all layout builder blocks.
+ */
+function layout_builder_block_anchors_block_view_alter(array &$build, BlockPluginInterface $block) {
+  // Only process layout builder blocks that have contextual links.
+  if (!isset($build['#contextual_links']['layout_builder_block'])) {
+    return;
+  }
+
+  // Get the UUID from the contextual links data.
+  // The contextual links array structure is: [route_name, route_parameters, metadata]
+  if (isset($build['#contextual_links']['layout_builder_block'][2]['uuid'])) {
+    $uuid = $build['#contextual_links']['layout_builder_block'][2]['uuid'];
+    
+    // Add the UUID-based ID to the block's attributes.
+    $build['#attributes']['id'] = 'block-' . $uuid;
+  }
+}
+
+/**
+ * Implements hook_contextual_links_view_alter().
+ *
+ * Adds the "Copy Anchor Link" option to layout builder block contextual menus.
+ */
+function layout_builder_block_anchors_contextual_links_view_alter(array &$element, $items) {
+  // Only process layout builder block contextual links.
+  if (!isset($element['#contextual_links']['layout_builder_block'])) {
+    return;
+  }
+
+  // Attach our JavaScript library.
+  $element['#attached']['library'][] = 'layout_builder_block_anchors/copy_anchor_link';
+  
+  // Extract UUID from the contextual links data.
+  $uuid = NULL;
+  if (isset($element['#contextual_links']['layout_builder_block'][2]['uuid'])) {
+    $uuid = $element['#contextual_links']['layout_builder_block'][2]['uuid'];
+  }
+  
+  if ($uuid && isset($element['#links'])) {
+    // Add the copy anchor link as a new contextual link.
+    $element['#links']['layout-builder-block-anchors-copy'] = [
+      'title' => t('Copy Anchor Link'),
+      'url' => \Drupal\Core\Url::fromRoute('<none>'),
+      'attributes' => [
+        'class' => ['copy-anchor-link'],
+        'data-block-uuid' => $uuid,
+      ],
+    ];
+  }
+}
+
