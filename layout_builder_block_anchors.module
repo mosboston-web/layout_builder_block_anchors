@@ -20,7 +20,7 @@ function layout_builder_block_anchors_form_layout_builder_update_block_alter(arr
   // URLs like: /layout_builder/update/block/overrides/node.441/0/content/...
   $current_url = \Drupal::request()->getUri();
 
-  if ($block_id && strpos($current_url, '/node.') !== 0) {
+  if ($block_id && strpos($current_url, '/node.') !== FALSE) {
     $parts = explode('node.', $current_url);
     // Trimming tail of URL by casting to int.
     $nid = (int) $parts[1] ?? NULL;
