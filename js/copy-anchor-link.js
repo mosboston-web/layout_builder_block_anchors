@@ -24,17 +24,17 @@
         link.addEventListener('click', function (e) {
           e.preventDefault();
           e.stopPropagation();
-          
+
           // Get the block UUID from the data attribute.
           const blockUuid = this.dataset.blockUuid;
           if (!blockUuid) {
             return;
           }
-          
+
           // Construct the anchor link.
           const currentUrl = window.location.href.split('#')[0];
           const anchorLink = currentUrl + '#block-' + blockUuid;
-          
+
           // Copy to clipboard.
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(anchorLink).then(function () {
@@ -54,15 +54,19 @@
             document.body.appendChild(textArea);
             textArea.focus();
             textArea.select();
-            
+
             try {
-              document.execCommand('copy');
-              showMessage('Anchor link copied to clipboard!');
+              const successful = document.execCommand('copy');
+              if (successful) {
+                showMessage('Anchor link copied to clipboard!');
+              } else {
+                showMessage('Failed to copy anchor link.', 'error');
+              }
             } catch (err) {
               console.error('Failed to copy anchor link:', err);
               showMessage('Failed to copy anchor link.', 'error');
             }
-            
+
             document.body.removeChild(textArea);
           }
         });
@@ -76,20 +80,43 @@
   function showMessage(message, type) {
     type = type || 'status';
 
+    // Remove any existing messages to prevent overlap.
+    const existingMessages = document.querySelectorAll('.layout-builder-block-anchors-message');
+    existingMessages.forEach(function (msg) {
+      msg.remove();
+    });
+
     // Create message element.
     const messageEl = document.createElement('div');
     messageEl.className = 'messages messages--' + type + ' layout-builder-block-anchors-message';
     messageEl.setAttribute('role', type === 'error' ? 'alert' : 'status');
     messageEl.setAttribute('aria-live', 'polite');
     messageEl.setAttribute('aria-atomic', 'true');
-    messageEl.textContent = message;
+
+    // Create message text.
+    const messageText = document.createElement('span');
+    messageText.textContent = message;
+    messageEl.appendChild(messageText);
+
+    // Create close button for accessibility.
+    const closeButton = document.createElement('button');
+    closeButton.className = 'layout-builder-block-anchors-message-close';
+    closeButton.setAttribute('type', 'button');
+    closeButton.setAttribute('aria-label', 'Close message');
+    closeButton.textContent = '×';
+    closeButton.addEventListener('click', function () {
+      messageEl.remove();
+    });
+    messageEl.appendChild(closeButton);
 
     document.body.appendChild(messageEl);
 
-    // Remove after 3 seconds.
+    // Remove after 5 seconds for better accessibility.
     setTimeout(function () {
-      messageEl.remove();
-    }, 3000);
+      if (messageEl.parentNode) {
+        messageEl.remove();
+      }
+    }, 5000);
   }
 
 })(Drupal);

@@ -20,11 +20,13 @@ function layout_builder_block_anchors_block_view_alter(array &$build, BlockPlugi
 
   // Get the UUID from the contextual links data.
   // The contextual links array structure is: [route_name, route_parameters, metadata]
-  if (isset($build['#contextual_links']['layout_builder_block'][2]['uuid'])) {
-    $uuid = $build['#contextual_links']['layout_builder_block'][2]['uuid'];
+  $contextual_links = $build['#contextual_links']['layout_builder_block'];
+  if (isset($contextual_links[2]['uuid']) && is_string($contextual_links[2]['uuid'])) {
+    $uuid = $contextual_links[2]['uuid'];
 
     // Add the UUID-based ID to the block's attributes.
-    $build['#attributes']['id'] = 'block-' . $uuid;
+    // Use Html::getId() to ensure the ID is valid HTML.
+    $build['#attributes']['id'] = \Drupal\Component\Utility\Html::getId('block-' . $uuid);
   }
 }
 
@@ -39,20 +41,22 @@ function layout_builder_block_anchors_contextual_links_view_alter(array &$elemen
     return;
   }
 
-  // Attach our JavaScript library.
-  $element['#attached']['library'][] = 'layout_builder_block_anchors/copy_anchor_link';
-
   // Extract UUID from the contextual links data.
   $uuid = NULL;
-  if (isset($element['#contextual_links']['layout_builder_block'][2]['uuid'])) {
-    $uuid = $element['#contextual_links']['layout_builder_block'][2]['uuid'];
+  $contextual_links = $element['#contextual_links']['layout_builder_block'];
+  if (isset($contextual_links[2]['uuid']) && is_string($contextual_links[2]['uuid'])) {
+    $uuid = $contextual_links[2]['uuid'];
   }
 
   if ($uuid && isset($element['#links'])) {
+    // Attach our JavaScript library only once.
+    $element['#attached']['library'][] = 'layout_builder_block_anchors/copy_anchor_link';
+
     // Add the copy anchor link as a new contextual link.
+    // Using <nolink> route since this is a JavaScript action, not navigation.
     $element['#links']['layout-builder-block-anchors-copy'] = [
       'title' => t('Copy Anchor Link'),
-      'url' => \Drupal\Core\Url::fromRoute('<front>'),
+      'url' => \Drupal\Core\Url::fromRoute('<nolink>'),
       'attributes' => [
         'class' => ['copy-anchor-link'],
         'data-block-uuid' => $uuid,

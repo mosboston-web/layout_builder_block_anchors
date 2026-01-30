@@ -11,20 +11,17 @@
   text-decoration: underline;
 }
 
-/* Add a link icon before the link text using Unicode */
-.copy-anchor-link::before {
-  content: '\1F517 ';
-  margin-right: 0.25em;
-}
-
 /* Styles for the success/error message */
 .layout-builder-block-anchors-message {
   position: fixed;
   top: 20px;
   right: 20px;
   z-index: 10000;
-  padding: 10px 20px;
+  padding: 10px 40px 10px 20px;
   border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .layout-builder-block-anchors-message.messages--status {
@@ -37,4 +34,26 @@
   background-color: #f8d7da;
   border: 1px solid #f5c6cb;
   color: #721c24;
+}
+
+/* Close button for message */
+.layout-builder-block-anchors-message-close {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  color: inherit;
+  opacity: 0.5;
+}
+
+.layout-builder-block-anchors-message-close:hover,
+.layout-builder-block-anchors-message-close:focus {
+  opacity: 1;
 }
