@@ -5,6 +5,7 @@
  * Primary module hooks for Layout Builder Block Anchors module.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
@@ -18,12 +19,11 @@ use Drupal\node\Entity\Node;
 function layout_builder_block_anchors_form_layout_builder_update_block_alter(array &$form, FormStateInterface $form_state) {
   $block_id = $form['settings']['block_form']['#block']->id() ?? NULL;
   // URLs like: /layout_builder/update/block/overrides/node.441/0/content/...
-  $current_url = \Drupal::request()->getUri();
-
-  if ($block_id && strpos($current_url, '/node.') !== 0) {
+  $current_url = \Drupal::service('path.current')->getPath();
+  if ($block_id && strpos($current_url, '/node.') !== FALSE) {
     $parts = explode('node.', $current_url);
     // Trimming tail of URL by casting to int.
-    $nid = (int) $parts[1] ?? NULL;
+    $nid = isset($parts[1]) ? (int) $parts[1] : 0;
     if ($nid) {
       $node = Node::load($nid);
       if ($node) {
@@ -35,7 +35,7 @@ function layout_builder_block_anchors_form_layout_builder_update_block_alter(arr
         else {
           $url_object = $node->toUrl('canonical', ['absolute' => TRUE]);
         }
-        $url_object->setOption('fragment', layout_builder_block_anchors_prefix() . $block_id);
+        $url_object->setOption('fragment', Html::cleanCssIdentifier(layout_builder_block_anchors_prefix() . $block_id));
         $url_with_anchor = $url_object->toString();
         $link = Link::fromTextAndUrl($url_with_anchor, Url::fromUri($url_with_anchor))->toString();
         // Weighted to show at the top of the form.
@@ -57,9 +57,22 @@ function layout_builder_block_anchors_form_layout_builder_update_block_alter(arr
 function layout_builder_block_anchors_preprocess_block(array &$variables) {
   $block_type = $variables['base_plugin_id'] ?? '';
   if ($block_type === 'inline_block') {
-    $anchor_id = layout_builder_block_anchors_prefix() . $variables['configuration']['block_id'];
-    // title_prefix is a reliable way to anchor to the top of the block.
-    $variables['title_prefix'] = ['#markup' => '<a id="' . $anchor_id . '"></a>'] + $variables['title_prefix'];
+    $block_id = $variables['configuration']['block_id'] ?? NULL;
+    if ($block_id) {
+      $anchor_id = layout_builder_block_anchors_prefix() . $block_id;
+      // title_prefix is a reliable way to anchor to the top of the block.
+      if (!isset($variables['title_prefix']) || !is_array($variables['title_prefix'])) {
+        $variables['title_prefix'] = [];
+      }
+      $variables['title_prefix']['layout_builder_block_anchor'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#attributes' => [
+          'id' => Html::cleanCssIdentifier($anchor_id),
+        ],
+        '#weight' => -100,
+      ];
+    }
   }
 }
 

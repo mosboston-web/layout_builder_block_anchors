@@ -1,6 +1,6 @@
 name: Layout Builder Block Anchors
 type: module
-description: "Adds anchorable IDs to layout builder blocks and shows these to site builders on block edit forms."
+description: "Adds anchorable IDs to layout builder inline blocks and shows these to site builders on block edit forms."
 core_version_requirement: ^10 || ^11
 package: BMOS
 dependencies:
