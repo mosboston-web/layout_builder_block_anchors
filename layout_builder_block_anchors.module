@@ -23,7 +23,7 @@ function layout_builder_block_anchors_form_layout_builder_update_block_alter(arr
   if ($block_id && strpos($current_url, '/node.') !== FALSE) {
     $parts = explode('node.', $current_url);
     // Trimming tail of URL by casting to int.
-    $nid = (int) $parts[1] ?? NULL;
+    $nid = isset($parts[1]) ? (int) $parts[1] : 0;
     if ($nid) {
       $node = Node::load($nid);
       if ($node) {
