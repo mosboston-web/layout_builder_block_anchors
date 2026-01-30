@@ -36,7 +36,7 @@ function layout_builder_block_anchors_form_layout_builder_update_block_alter(arr
         else {
           $url_object = $node->toUrl('canonical', ['absolute' => TRUE]);
         }
-        $url_object->setOption('fragment', layout_builder_block_anchors_prefix() . $block_id);
+        $url_object->setOption('fragment', layout_builder_block_anchors_prefix() . Html::getId($block_id));
         $url_with_anchor = $url_object->toString();
         $link = Link::fromTextAndUrl($url_with_anchor, Url::fromUri($url_with_anchor))->toString();
         // Weighted to show at the top of the form.
