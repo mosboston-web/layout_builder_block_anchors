@@ -5,6 +5,7 @@
  * Primary module hooks for Layout Builder Block Anchors module.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
@@ -35,7 +36,7 @@ function layout_builder_block_anchors_form_layout_builder_update_block_alter(arr
         else {
           $url_object = $node->toUrl('canonical', ['absolute' => TRUE]);
         }
-        $url_object->setOption('fragment', layout_builder_block_anchors_prefix() . $block_id);
+        $url_object->setOption('fragment', layout_builder_block_anchors_prefix() . Html::cleanCssIdentifier($block_id));
         $url_with_anchor = $url_object->toString();
         $link = Link::fromTextAndUrl($url_with_anchor, Url::fromUri($url_with_anchor))->toString();
         // Weighted to show at the top of the form.
@@ -57,19 +58,22 @@ function layout_builder_block_anchors_form_layout_builder_update_block_alter(arr
 function layout_builder_block_anchors_preprocess_block(array &$variables) {
   $block_type = $variables['base_plugin_id'] ?? '';
   if ($block_type === 'inline_block') {
-    $anchor_id = layout_builder_block_anchors_prefix() . $variables['configuration']['block_id'];
-    // title_prefix is a reliable way to anchor to the top of the block.
-    if (!isset($variables['title_prefix']) || !is_array($variables['title_prefix'])) {
-      $variables['title_prefix'] = [];
+    $block_id = $variables['configuration']['block_id'] ?? NULL;
+    if ($block_id) {
+      $anchor_id = layout_builder_block_anchors_prefix() . Html::cleanCssIdentifier($block_id);
+      // title_prefix is a reliable way to anchor to the top of the block.
+      if (!isset($variables['title_prefix']) || !is_array($variables['title_prefix'])) {
+        $variables['title_prefix'] = [];
+      }
+      $variables['title_prefix']['layout_builder_block_anchor'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'a',
+        '#attributes' => [
+          'id' => $anchor_id,
+        ],
+        '#weight' => -100,
+      ];
     }
-    $variables['title_prefix']['layout_builder_block_anchor'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'a',
-      '#attributes' => [
-        'id' => $anchor_id,
-      ],
-      '#weight' => -100,
-    ];
   }
 }
 
