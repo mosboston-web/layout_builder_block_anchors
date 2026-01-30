@@ -13,7 +13,7 @@
     attach: function (context, settings) {
       // Find all copy anchor link items.
       const copyLinks = context.querySelectorAll('.copy-anchor-link');
-      
+
       copyLinks.forEach(function (link) {
         // Skip if already processed.
         if (link.dataset.anchorLinkProcessed) {
@@ -75,25 +75,17 @@
    */
   function showMessage(message, type) {
     type = type || 'status';
-    
+
     // Create message element.
     const messageEl = document.createElement('div');
-    messageEl.className = 'messages messages--' + type;
+    messageEl.className = 'messages messages--' + type + ' layout-builder-block-anchors-message';
     messageEl.setAttribute('role', type === 'error' ? 'alert' : 'status');
     messageEl.setAttribute('aria-live', 'polite');
+    messageEl.setAttribute('aria-atomic', 'true');
     messageEl.textContent = message;
-    messageEl.style.position = 'fixed';
-    messageEl.style.top = '20px';
-    messageEl.style.right = '20px';
-    messageEl.style.zIndex = '10000';
-    messageEl.style.padding = '10px 20px';
-    messageEl.style.backgroundColor = type === 'error' ? '#f8d7da' : '#d4edda';
-    messageEl.style.border = '1px solid ' + (type === 'error' ? '#f5c6cb' : '#c3e6cb');
-    messageEl.style.color = type === 'error' ? '#721c24' : '#155724';
-    messageEl.style.borderRadius = '4px';
-    
+
     document.body.appendChild(messageEl);
-    
+
     // Remove after 3 seconds.
     setTimeout(function () {
       messageEl.remove();

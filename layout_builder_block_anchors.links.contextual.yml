@@ -1,5 +1,0 @@
-layout_builder_block_anchors.copy_anchor:
-  title: 'Copy Anchor Link'
-  route_name: '<none>'
-  group: 'layout_builder_block'
-  weight: 100

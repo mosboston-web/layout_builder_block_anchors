@@ -22,7 +22,7 @@ function layout_builder_block_anchors_block_view_alter(array &$build, BlockPlugi
   // The contextual links array structure is: [route_name, route_parameters, metadata]
   if (isset($build['#contextual_links']['layout_builder_block'][2]['uuid'])) {
     $uuid = $build['#contextual_links']['layout_builder_block'][2]['uuid'];
-    
+
     // Add the UUID-based ID to the block's attributes.
     $build['#attributes']['id'] = 'block-' . $uuid;
   }
@@ -41,18 +41,18 @@ function layout_builder_block_anchors_contextual_links_view_alter(array &$elemen
 
   // Attach our JavaScript library.
   $element['#attached']['library'][] = 'layout_builder_block_anchors/copy_anchor_link';
-  
+
   // Extract UUID from the contextual links data.
   $uuid = NULL;
   if (isset($element['#contextual_links']['layout_builder_block'][2]['uuid'])) {
     $uuid = $element['#contextual_links']['layout_builder_block'][2]['uuid'];
   }
-  
+
   if ($uuid && isset($element['#links'])) {
     // Add the copy anchor link as a new contextual link.
     $element['#links']['layout-builder-block-anchors-copy'] = [
       'title' => t('Copy Anchor Link'),
-      'url' => \Drupal\Core\Url::fromRoute('<none>'),
+      'url' => \Drupal\Core\Url::fromRoute('<front>'),
       'attributes' => [
         'class' => ['copy-anchor-link'],
         'data-block-uuid' => $uuid,
@@ -60,4 +60,3 @@ function layout_builder_block_anchors_contextual_links_view_alter(array &$elemen
     ];
   }
 }
-

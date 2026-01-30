@@ -56,9 +56,11 @@ layout_builder_block_anchors/
 ├── layout_builder_block_anchors.info.yml       # Module definition
 ├── layout_builder_block_anchors.module         # Hook implementations
 ├── layout_builder_block_anchors.libraries.yml  # JavaScript library definition
-├── layout_builder_block_anchors.links.contextual.yml  # Contextual link definition
+├── composer.json                               # Composer package definition
 ├── js/
 │   └── copy-anchor-link.js                    # Clipboard copy functionality
+├── css/
+│   └── copy-anchor-link.css                   # Styling for contextual link and messages
 └── README.md                                  # This file
 ```
 
