@@ -1,0 +1,71 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for Layout Builder Block Anchors module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Adds a block anchor link to the layout builder block configuration form.
+ */
+function layout_builder_block_anchors_form_layout_builder_update_block_alter(array &$form, FormStateInterface $form_state) {
+  $block_id = $form['settings']['block_form']['#block']->id() ?? NULL;
+  // URLs like: /layout_builder/update/block/overrides/node.441/0/content/...
+  $current_url = \Drupal::request()->getUri();
+
+  if ($block_id && strpos($current_url, '/node.') !== 0) {
+    $parts = explode('node.', $current_url);
+    // Trimming tail of URL by casting to int.
+    $nid = (int) $parts[1] ?? NULL;
+    if ($nid) {
+      $node = Node::load($nid);
+      if ($node) {
+        // Checking front to avoid links with /home in them.
+        $front = \Drupal::config('system.site')->get('page.front');
+        if ($front === '/node/' . $nid) {
+          $url_object = Url::fromRoute('<front>', [], ['absolute' => TRUE]);
+        }
+        else {
+          $url_object = $node->toUrl('canonical', ['absolute' => TRUE]);
+        }
+        $url_object->setOption('fragment', layout_builder_block_anchors_prefix() . $block_id);
+        $url_with_anchor = $url_object->toString();
+        $link = Link::fromTextAndUrl($url_with_anchor, Url::fromUri($url_with_anchor))->toString();
+        // Weighted to show at the top of the form.
+        $form['anchor_link'] = [
+          '#type' => 'markup',
+          '#markup' => '<div class="layout-builder-block-anchor-link"><strong>Block Anchor Link: </strong>' . $link . '</div>',
+          '#weight' => -100,
+        ];
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_block().
+ *
+ * Adds an anchor ID to layout builder inline blocks.
+ */
+function layout_builder_block_anchors_preprocess_block(array &$variables) {
+  $block_type = $variables['base_plugin_id'] ?? '';
+  if ($block_type === 'inline_block') {
+    $anchor_id = layout_builder_block_anchors_prefix() . $variables['configuration']['block_id'];
+    // title_prefix is a reliable way to anchor to the top of the block.
+    $variables['title_prefix'] = ['#markup' => '<a id="' . $anchor_id . '"></a>'] + $variables['title_prefix'];
+  }
+}
+
+/**
+ * Returns the anchor prefix for layout builder block anchors.
+ */
+function layout_builder_block_anchors_prefix() {
+  return 'block-';
+}
