@@ -59,7 +59,17 @@ function layout_builder_block_anchors_preprocess_block(array &$variables) {
   if ($block_type === 'inline_block') {
     $anchor_id = layout_builder_block_anchors_prefix() . $variables['configuration']['block_id'];
     // title_prefix is a reliable way to anchor to the top of the block.
-    $variables['title_prefix'] = ['#markup' => '<a id="' . $anchor_id . '"></a>'] + $variables['title_prefix'];
+    if (!isset($variables['title_prefix']) || !is_array($variables['title_prefix'])) {
+      $variables['title_prefix'] = [];
+    }
+    $variables['title_prefix']['layout_builder_block_anchor'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'a',
+      '#attributes' => [
+        'id' => $anchor_id,
+      ],
+      '#weight' => -100,
+    ];
   }
 }
 
