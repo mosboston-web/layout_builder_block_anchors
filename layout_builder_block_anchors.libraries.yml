@@ -2,6 +2,9 @@ copy_anchor_link:
   version: 1.x
   js:
     js/copy-anchor-link.js: {}
+  css:
+    theme:
+      css/copy-anchor-link.css: {}
   dependencies:
     - core/drupal
     - core/drupalSettings

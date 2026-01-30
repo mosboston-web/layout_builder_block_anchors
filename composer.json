@@ -1,0 +1,9 @@
+{
+  "name": "drupal/layout_builder_block_anchors",
+  "description": "Adds anchorable UUIDs to layout builder blocks with a site builder menu item for copying an anchored link.",
+  "type": "drupal-module",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "drupal/core": "^9 || ^10 || ^11"
+  }
+}

@@ -1,0 +1,18 @@
+/**
+ * @file
+ * Styles for the Copy Anchor Link contextual menu item.
+ */
+
+.copy-anchor-link {
+  cursor: pointer;
+}
+
+.copy-anchor-link:hover {
+  text-decoration: underline;
+}
+
+/* Optional: Add an icon before the link text */
+.copy-anchor-link::before {
+  content: '🔗 ';
+  margin-right: 0.25em;
+}
