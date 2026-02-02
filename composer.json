@@ -1,0 +1,8 @@
+{
+  "name": "mosboston-web/layout_builder_block_anchors",
+  "type": "drupal-module",
+  "description": "Layout Builder block anchor support",
+  "require": {
+    "drupal/core": "^10 || ^11"
+  }
+}
