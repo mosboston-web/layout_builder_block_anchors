@@ -1,2 +1,3 @@
 # layout_builder_block_anchors
-Adds anchorable UUIDs to layout builder blocks with a site builder menu item for copying an anchored link.
+
+Adds anchorable IDs to layout builder inline blocks and shows these to site builders on block edit forms.
